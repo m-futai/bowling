@@ -69,7 +69,7 @@ describe "ボウリングのスコア計算" do
                 @game.add_score(7)
                 # 合計を計算
                 @game.calc_score
-                # 期待する合計
+                # 期待する合計 ※()内はボーナス点
                 # 3 + 7 + 4 + (4) + 3 + 7 = 28
                 expect(@game.total_score).to eq 28
             end    
