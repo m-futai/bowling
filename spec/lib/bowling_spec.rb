@@ -157,6 +157,11 @@ describe "ボウリングのスコア計算" do
 end
 
 describe "フレームごとの合計" do
+    # インスタンスの生成を共通化
+    before do
+        @game = Bowling.new
+    end  
+    
     context "全ての投球で1ピンずつ倒した場合" do
         it "1フレーム目の合計が2になること" do 
             add_many_scores(20, 1)
@@ -196,5 +201,12 @@ describe "フレームごとの合計" do
             # 10 + (5) + (4) = 19
             expect(@game.frame_score(1)).to eq 19
         end    
-    end    
+    end  
+    private
+    # 複数回のスコア追加をまとめて実行する
+    def add_many_scores(count, pins)
+        count.times do
+            @game.add_score(pins)
+        end    
+    end  
 end    
