@@ -8,6 +8,8 @@ class Bowling
         @scores = []
         # 一時保存用の配列
         @temp = []
+        # フレームごとの合計を格納する配列
+        @frame_score = []
     end    
     
     # スコアの合計を返す
@@ -26,24 +28,25 @@ class Bowling
         end    
     end
     
+    # 指定したフレームの時点でのスコア合計を返す
+    def frame_score(frame)
+        @frame_score[frame - 1]
+    end    
+    
     # スコアの合計を計算する
     def calc_score
         @scores.each.with_index(1) do |score, index|
             # 最終フレーム以外でストライクなら、スコアにボーナスを含めて合計する
             if strike?(score) && not_last_frame?(index)
-                # 次のフレームもストライクで、なおかつ最終フレーム以外なら、
-                # もう一つ次のフレームの一投目をボーナスの対象にする
-                if strike?(@scores[index]) && not_last_frame?(index + 1)
-                    @total_score += 20 + @scores[index + 1].first
-                else
-                    @total_score += 10 + @scores[index].inject(:+)
-                end
+                @total_score += calc_strike_bounus(index)
             # 最終フレーム以外でのスペアなら、スコアボーナスに含めて合計する
             elsif spare?(score) && not_last_frame?(index)
                 @total_score += calc_spare_bounus(index)
             else
                 @total_score += score.inject(:+)
-            end    
+            end
+            # 合計をフレームごとに記憶しておく
+            @frame_score << @total_score
         end    
     end
     
@@ -61,8 +64,17 @@ class Bowling
         index < 10
     end
     
-    # スペアボーナスを含んだ値で須戸を計算する
+    # スペアボーナスを含んだ値でスコアを計算する
     def calc_spare_bounus(index)
         10 + @scores[index].first
+    end 
+    # ストライクボーナスを含んだ値でスコアを計算する
+    def calc_strike_bounus(index)
+        # 次のフレームもストライクで、なおかつ最終フレーム以外なら、もう一つ次の一投目をボーナスの対象にする
+        if strike?(@scores[index]) && not_last_frame?(index)
+            20 + @scores[index + 1].first
+        else
+            10 + @scores[index].inject(:+)
+        end    
     end    
 end
